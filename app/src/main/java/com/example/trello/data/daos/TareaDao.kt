@@ -41,7 +41,7 @@ interface TareaDao {
     suspend fun insertEtiquetaXTarea(relacion: EtiquetaXTarea): Long
 
     @Transaction
-    suspend fun crearTareaConEtiquetas(
+    suspend fun insertTareaConEtiquetas(
         tarea: Tarea,
         idsEtiquetas: List<Int>
     ): Long {
@@ -71,15 +71,15 @@ interface TareaDao {
 
 
     @Transaction
-    suspend fun  actualizarTareaConEtiquetas(
+    suspend fun  updateTareaConEtiquetas(
         tarea: Tarea,
-        idsEtiqueta: List<Int>
+        idsEtiquetas: List<Int>
     ): Int {
         val filasActualizadas = updateTarea(tarea)
 
         deleteEtiquetasDeTarea(tarea.idTarea)
 
-        idsEtiqueta.forEach { idEtiqueta->
+        idsEtiquetas.forEach { idEtiqueta->
             insertEtiquetaXTarea(
                 EtiquetaXTarea(
                     idTarea = tarea.idTarea,
