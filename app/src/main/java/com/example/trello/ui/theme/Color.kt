@@ -1,4 +1,4 @@
-package com.example.jiraapp.ui.theme
+package com.example.trello.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

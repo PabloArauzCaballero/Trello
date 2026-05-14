@@ -1,4 +1,4 @@
-package com.example.jiraapp
+package com.example.trello
 
 import org.junit.Test
 

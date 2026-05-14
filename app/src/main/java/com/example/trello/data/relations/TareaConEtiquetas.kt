@@ -1,10 +1,10 @@
-package com.example.jiraapp.data.relations
+package com.example.trello.data.relations
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import com.example.jiraapp.data.entities.Etiqueta
-import com.example.jiraapp.data.entities.EtiquetaXTarea
+import com.example.trello.data.entities.Etiqueta
+import com.example.trello.data.entities.EtiquetaXTarea
 
 data class TareaConEtiquetas (
     @Embedded

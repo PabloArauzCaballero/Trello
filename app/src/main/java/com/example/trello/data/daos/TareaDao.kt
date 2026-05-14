@@ -1,4 +1,4 @@
-package com.example.jiraapp.data.daos
+package com.example.trello.data.daos
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -7,9 +7,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.example.jiraapp.data.entities.EtiquetaXTarea
-import com.example.jiraapp.data.entities.Tarea
-import com.example.jiraapp.data.relations.TareaConEtiquetas
+import com.example.trello.data.entities.EtiquetaXTarea
+import com.example.trello.data.entities.Tarea
+import com.example.trello.data.relations.TareaConEtiquetas
 
 @Dao
 interface TareaDao {

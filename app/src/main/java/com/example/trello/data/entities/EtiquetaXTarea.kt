@@ -1,4 +1,4 @@
-package com.example.jiraapp.data.entities
+package com.example.trello.data.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

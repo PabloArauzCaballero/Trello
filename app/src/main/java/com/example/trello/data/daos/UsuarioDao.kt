@@ -1,11 +1,11 @@
-package com.example.jiraapp.data.daos
+package com.example.trello.data.daos
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.jiraapp.data.entities.Usuario
+import com.example.trello.data.entities.Usuario
 
 @Dao
 interface UsuarioDao {

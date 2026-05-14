@@ -1,8 +1,8 @@
-package com.example.jiraapp.data.database
+package com.example.trello.data.database
 
 import androidx.room.TypeConverter
-import com.example.jiraapp.data.enums.tarea.Estado
-import com.example.jiraapp.data.enums.tarea.Prioridad
+import com.example.trello.data.enums.tarea.Estado
+import com.example.trello.data.enums.tarea.Prioridad
 import java.util.Date
 
 class Converters {

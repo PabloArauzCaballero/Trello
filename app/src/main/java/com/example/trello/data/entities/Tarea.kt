@@ -1,11 +1,11 @@
-package com.example.jiraapp.data.entities
+package com.example.trello.data.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.jiraapp.data.enums.tarea.Estado
-import com.example.jiraapp.data.enums.tarea.Prioridad
+import com.example.trello.data.enums.tarea.Estado
+import com.example.trello.data.enums.tarea.Prioridad
 import java.util.Date
 
 @Entity (

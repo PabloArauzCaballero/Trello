@@ -1,10 +1,10 @@
-package com.example.jiraapp.data.daos
+package com.example.trello.data.daos
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.jiraapp.data.entities.EtiquetaXTarea
+import com.example.trello.data.entities.EtiquetaXTarea
 
 @Dao
 interface EtiquetaXTareaDao {

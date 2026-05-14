@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.practicabd"
+    namespace = "com.example.trello"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.practicabd"
+        applicationId = "com.example.trello"
         minSdk = 23
         targetSdk = 37
         versionCode = 1
