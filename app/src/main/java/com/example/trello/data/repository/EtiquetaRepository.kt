@@ -1,16 +1,14 @@
 package com.example.trello.data.repository
-
-import android.content.Context
 import com.example.trello.data.database.AppDatabase
 import com.example.trello.data.entities.Etiqueta
+import javax.inject.Inject
 
-class EtiquetaRepository (
-    private val context: Context
+class EtiquetaRepository @Inject constructor(
+    private val db: AppDatabase
 ){
     suspend fun getEtiquetasPorUsuario(idUsuario: Int): List<Etiqueta>{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .etiquetaDao()
                 .getEtiquetas(idUsuario)
         } catch (e: Exception) {
@@ -21,8 +19,7 @@ class EtiquetaRepository (
 
     suspend fun getEtiquetasPorUsuarioYId(idUsuario: Int, idEtiqueta: Int): Etiqueta?{
         return try{
-            AppDatabase
-                .getInstance(context)
+            db
                 .etiquetaDao()
                 .getEtiquetaById(idEtiqueta = idEtiqueta, idUsuario=idUsuario)
         }catch (e: Exception){
@@ -33,8 +30,7 @@ class EtiquetaRepository (
 
     suspend fun insertEtiqueta(etiqueta: Etiqueta): Long?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .etiquetaDao()
                 .insertEtiqueta(etiqueta)
         } catch (e: Exception){
@@ -45,8 +41,7 @@ class EtiquetaRepository (
 
     suspend fun updateEtiqueta(etiqueta: Etiqueta): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .etiquetaDao()
                 .updateEtiqueta(etiqueta)
         } catch (e: Exception){
@@ -57,8 +52,7 @@ class EtiquetaRepository (
 
     suspend fun deleteEtiqueta(etiqueta: Etiqueta): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .etiquetaDao()
                 .deleteEtiqueta(etiqueta)
         } catch (e: Exception){
@@ -69,8 +63,7 @@ class EtiquetaRepository (
 
     suspend fun deleteEtiquetaById(idEtiqueta: Int, idUsuario: Int): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .etiquetaDao()
                 .deleteEtiquetaById(idEtiqueta, idUsuario = idUsuario)
         } catch (e: Exception){

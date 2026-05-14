@@ -1,16 +1,14 @@
 package com.example.trello.data.repository
-
-import android.content.Context
 import com.example.trello.data.database.AppDatabase
 import com.example.trello.data.entities.Usuario
+import javax.inject.Inject
 
-class UsuarioRepository(
-    private val context: Context
+class UsuarioRepository @Inject constructor(
+    private val db: AppDatabase
 ) {
     suspend fun insertUsuario(usuario: Usuario): Long?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .usuarioDao()
                 .insertUsuario(usuario = usuario)
         }catch (e: Exception){
@@ -21,8 +19,7 @@ class UsuarioRepository(
 
     suspend fun updateUsuario(usuario: Usuario): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .usuarioDao()
                 .updateUsuario(usuario = usuario)
         } catch (e: Exception){
@@ -33,8 +30,7 @@ class UsuarioRepository(
 
     suspend fun getUsuario(idUsuario: Int): Usuario?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .usuarioDao()
                 .getUsuario(idUsuario = idUsuario)
         } catch (e: Exception){
@@ -45,8 +41,7 @@ class UsuarioRepository(
 
     suspend fun deleteUsuario(usuario: Usuario): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .usuarioDao()
                 .deleteUsuario(usuario = usuario)
         } catch (e: Exception){
@@ -57,8 +52,7 @@ class UsuarioRepository(
 
     suspend fun deleteUsuarioById(idUsuario: Int): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .usuarioDao()
                 .deleteUsuarioById(idUsuario = idUsuario)
         } catch (e: Exception){

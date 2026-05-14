@@ -10,12 +10,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.JiraApp">
+        android:name=".di.MyApp"
+        android:theme="@style/Theme.Trello"
+        tools:ignore="Instantiatable">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.JiraApp">
+            android:theme="@style/Theme.Trello">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

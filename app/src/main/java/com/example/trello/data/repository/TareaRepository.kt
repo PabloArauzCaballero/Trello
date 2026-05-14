@@ -1,17 +1,15 @@
 package com.example.trello.data.repository
-
-import android.content.Context
 import com.example.trello.data.database.AppDatabase
 import com.example.trello.data.entities.Tarea
 import com.example.trello.data.relations.TareaConEtiquetas
+import javax.inject.Inject
 
-class TareaRepository (
-    private val context: Context
+class TareaRepository @Inject constructor(
+    private val db: AppDatabase
 ){
     suspend fun getTareasConEtiquetas(idUsuario: Int): List<TareaConEtiquetas>?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .getTareasConEtiquetas(idUsuario = idUsuario)
         }catch (e: Exception){
@@ -22,8 +20,7 @@ class TareaRepository (
 
     suspend fun getTareaConEtiquetaById(idUsuario: Int, idTarea: Int): TareaConEtiquetas?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .getTareaConEtiquetasPorTarea(idUsuario = idUsuario, idTarea = idTarea)
         }catch (e: Exception){
@@ -37,8 +34,7 @@ class TareaRepository (
         idsEtiquetas: List<Int>,
     ): Long?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .insertTareaConEtiquetas(tarea = tarea, idsEtiquetas=idsEtiquetas)
         }catch (e: Exception){
@@ -52,8 +48,7 @@ class TareaRepository (
         idsEtiquetas: List<Int>,
     ): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .updateTareaConEtiquetas(tarea = tarea, idsEtiquetas=idsEtiquetas)
         }catch (e: Exception){
@@ -67,8 +62,7 @@ class TareaRepository (
         tarea: Tarea,
     ): Long?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .insertTarea(tarea = tarea,)
         }catch (e: Exception){
@@ -81,8 +75,7 @@ class TareaRepository (
         tarea: Tarea,
     ): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .updateTarea(tarea = tarea)
         }catch (e: Exception){
@@ -95,8 +88,7 @@ class TareaRepository (
         tarea: Tarea,
     ): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .deleteTarea(tarea = tarea)
         }catch (e: Exception){
@@ -110,8 +102,7 @@ class TareaRepository (
         idUsuario: Int
     ): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .deleteTareaById(idTarea = idTarea, idUsuario = idUsuario)
         }catch (e: Exception){
@@ -124,8 +115,7 @@ class TareaRepository (
         idTarea: Int,
     ): Int?{
         return try {
-            AppDatabase
-                .getInstance(context)
+            db
                 .tareaDao()
                 .deleteEtiquetasDeTarea(idTarea = idTarea)
         }catch (e: Exception){
