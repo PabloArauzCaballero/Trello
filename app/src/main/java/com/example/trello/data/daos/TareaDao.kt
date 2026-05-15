@@ -13,6 +13,7 @@ import com.example.trello.data.relations.TareaConEtiquetas
 
 @Dao
 interface TareaDao {
+
     @Transaction
     @Query("""
         SELECT * FROM tareas 
@@ -40,56 +41,8 @@ interface TareaDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertEtiquetaXTarea(relacion: EtiquetaXTarea): Long
 
-    @Transaction
-    suspend fun insertTareaConEtiquetas(
-        tarea: Tarea,
-        idsEtiquetas: List<Int>
-    ): Long {
-        val idTareaGenerado = insertTarea(tarea)
-
-        idsEtiquetas.forEach {idEtiqueta ->
-            insertEtiquetaXTarea(
-                EtiquetaXTarea(
-                    idTarea = idTareaGenerado.toInt(),
-                    idEtiqueta = idEtiqueta
-                )
-            )
-        }
-
-        return idTareaGenerado
-    }
-
     @Update
     suspend fun updateTarea(tarea: Tarea): Int
-
-
-    @Query("""
-        DELETE FROM etiquetaxtarea
-        WHERE idTarea = :idTarea
-    """)
-    suspend fun deleteEtiquetasDeTarea(idTarea: Int): Int
-
-
-    @Transaction
-    suspend fun  updateTareaConEtiquetas(
-        tarea: Tarea,
-        idsEtiquetas: List<Int>
-    ): Int {
-        val filasActualizadas = updateTarea(tarea)
-
-        deleteEtiquetasDeTarea(tarea.idTarea)
-
-        idsEtiquetas.forEach { idEtiqueta->
-            insertEtiquetaXTarea(
-                EtiquetaXTarea(
-                    idTarea = tarea.idTarea,
-                    idEtiqueta = idEtiqueta
-                )
-            )
-        }
-
-        return filasActualizadas
-    }
 
     @Delete
     suspend fun deleteTarea(tarea: Tarea): Int
@@ -103,4 +56,131 @@ interface TareaDao {
         idUsuario: Int,
         idTarea: Int
     ): Int
+
+    @Query("""
+        DELETE FROM etiquetaxtarea
+        WHERE idTarea = :idTarea
+    """)
+    suspend fun deleteEtiquetasDeTarea(idTarea: Int): Int
+
+    @Query("""
+        SELECT idEtiqueta 
+        FROM etiqueta
+        WHERE idUsuario = :idUsuario
+        AND idEtiqueta IN (:idsEtiquetas)
+    """)
+    suspend fun getIdsEtiquetasDelUsuario(
+        idUsuario: Int,
+        idsEtiquetas: List<Int>
+    ): List<Int>
+
+    @Query("""
+        SELECT EXISTS(
+            SELECT 1 
+            FROM tareas
+            WHERE idUsuario = :idUsuario
+            AND idTarea = :idTarea
+        )
+    """)
+    suspend fun existeTareaDelUsuario(
+        idUsuario: Int,
+        idTarea: Int
+    ): Boolean
+
+    suspend fun validarEtiquetasDelUsuario(
+        idUsuario: Int,
+        idsEtiquetas: List<Int>
+    ) {
+        val idsEtiquetasUnicas = idsEtiquetas.distinct()
+
+        if (idsEtiquetasUnicas.isEmpty()) {
+            return
+        }
+
+        val idsEtiquetasValidas = getIdsEtiquetasDelUsuario(
+            idUsuario = idUsuario,
+            idsEtiquetas = idsEtiquetasUnicas
+        ).toSet()
+
+        val idsEtiquetasInvalidas = idsEtiquetasUnicas.filterNot { idEtiqueta ->
+            idEtiqueta in idsEtiquetasValidas
+        }
+
+        if (idsEtiquetasInvalidas.isNotEmpty()) {
+            throw IllegalArgumentException(
+                "Las siguientes etiquetas no existen o no pertenecen al usuario: $idsEtiquetasInvalidas"
+            )
+        }
+    }
+
+    @Transaction
+    suspend fun insertTareaConEtiquetas(
+        tarea: Tarea,
+        idsEtiquetas: List<Int>
+    ): Long {
+        val idsEtiquetasUnicas = idsEtiquetas.distinct()
+
+        validarEtiquetasDelUsuario(
+            idUsuario = tarea.idUsuario,
+            idsEtiquetas = idsEtiquetasUnicas
+        )
+
+        val idTareaGenerado = insertTarea(tarea)
+
+        idsEtiquetasUnicas.forEach { idEtiqueta ->
+            insertEtiquetaXTarea(
+                EtiquetaXTarea(
+                    idTarea = idTareaGenerado.toInt(),
+                    idEtiqueta = idEtiqueta
+                )
+            )
+        }
+
+        return idTareaGenerado
+    }
+
+    @Transaction
+    suspend fun updateTareaConEtiquetas(
+        tarea: Tarea,
+        idsEtiquetas: List<Int>
+    ): Int {
+        val existeTareaDelUsuario = existeTareaDelUsuario(
+            idUsuario = tarea.idUsuario,
+            idTarea = tarea.idTarea
+        )
+
+        if (!existeTareaDelUsuario) {
+            throw IllegalArgumentException(
+                "La tarea no existe o no pertenece al usuario."
+            )
+        }
+
+        val idsEtiquetasUnicas = idsEtiquetas.distinct()
+
+        validarEtiquetasDelUsuario(
+            idUsuario = tarea.idUsuario,
+            idsEtiquetas = idsEtiquetasUnicas
+        )
+
+        val filasActualizadas = updateTarea(tarea)
+
+        if (filasActualizadas == 0) {
+            throw IllegalArgumentException(
+                "No se pudo actualizar la tarea."
+            )
+        }
+
+        deleteEtiquetasDeTarea(tarea.idTarea)
+
+        idsEtiquetasUnicas.forEach { idEtiqueta ->
+            insertEtiquetaXTarea(
+                EtiquetaXTarea(
+                    idTarea = tarea.idTarea,
+                    idEtiqueta = idEtiqueta
+                )
+            )
+        }
+
+        return filasActualizadas
+    }
 }

@@ -3,7 +3,7 @@ import com.example.trello.data.database.AppDatabase
 import com.example.trello.data.entities.EtiquetaXTarea
 import javax.inject.Inject
 
-class UsuarioXEtiquetaRepository @Inject constructor(
+class EtiquetaXUsuarioRepository @Inject constructor(
     private val db: AppDatabase
 ) {
     suspend fun asociarEtiquetaATarea(etiquetaXTarea: EtiquetaXTarea): Long?{

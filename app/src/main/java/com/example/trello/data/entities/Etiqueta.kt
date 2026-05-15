@@ -3,6 +3,7 @@ package com.example.trello.data.entities
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "etiqueta",
@@ -20,6 +21,7 @@ import androidx.room.Index
     ]
 )
 class Etiqueta (
+    @PrimaryKey(autoGenerate = true)
     val idEtiqueta: Int,
 
     var idUsuario: Int,

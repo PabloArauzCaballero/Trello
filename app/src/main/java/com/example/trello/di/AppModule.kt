@@ -7,7 +7,7 @@ import com.example.trello.data.database.AppDatabase.Companion.DB_NAME
 import com.example.trello.data.repository.EtiquetaRepository
 import com.example.trello.data.repository.TareaRepository
 import com.example.trello.data.repository.UsuarioRepository
-import com.example.trello.data.repository.UsuarioXEtiquetaRepository
+import com.example.trello.data.repository.EtiquetaXUsuarioRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,8 +38,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideUsuarioXEtiquetaRepository(db: AppDatabase): UsuarioXEtiquetaRepository{
-        return UsuarioXEtiquetaRepository(db)
+    fun provideUsuarioXEtiquetaRepository(db: AppDatabase): EtiquetaXUsuarioRepository{
+        return EtiquetaXUsuarioRepository(db)
     }
 
 

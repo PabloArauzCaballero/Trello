@@ -5,10 +5,11 @@ import androidx.room.Junction
 import androidx.room.Relation
 import com.example.trello.data.entities.Etiqueta
 import com.example.trello.data.entities.EtiquetaXTarea
+import com.example.trello.data.entities.Tarea
 
 data class TareaConEtiquetas (
     @Embedded
-    val etiqueta: Etiqueta,
+    val tarea: Tarea,
 
     @Relation(
         parentColumn = "idTarea",

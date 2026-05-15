@@ -3,8 +3,10 @@ package com.example.trello.data.entities
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+
 @Entity(
     tableName = "etiquetaxtarea",
+    primaryKeys = ["idTarea", "idEtiqueta"],
     foreignKeys = [
         ForeignKey(
             entity = Tarea::class,
@@ -23,11 +25,10 @@ import androidx.room.Index
     ],
     indices = [
         Index(value = ["idTarea"]),
-        Index(value = ["idEtiqueta"]),
+        Index(value = ["idEtiqueta"])
     ]
 )
-
-class EtiquetaXTarea (
-    val idEtiqueta: Int,
-    val idTarea: Int
+data class EtiquetaXTarea(
+    val idTarea: Int,
+    val idEtiqueta: Int
 )

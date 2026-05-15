@@ -10,7 +10,7 @@ import com.example.trello.data.entities.Usuario
 @Dao
 interface UsuarioDao {
     @Query ("SELECT * FROM usuarios WHERE idUsuario= :idUsuario")
-    suspend fun getUsuario(idUsuario: Int) : Usuario
+    suspend fun getUsuario(idUsuario: Int) : Usuario?
 
     @Insert
     suspend fun insertUsuario(usuario: Usuario): Long
