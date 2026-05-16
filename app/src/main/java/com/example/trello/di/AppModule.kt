@@ -6,8 +6,7 @@ import com.example.trello.data.database.AppDatabase
 import com.example.trello.data.database.AppDatabase.Companion.DB_NAME
 import com.example.trello.data.repository.EtiquetaRepository
 import com.example.trello.data.repository.TareaRepository
-import com.example.trello.data.repository.UsuarioRepository
-import com.example.trello.data.repository.EtiquetaXUsuarioRepository
+import com.example.trello.data.repository.EtiquetaXTareaRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,14 +19,11 @@ import javax.inject.Singleton
 class AppModule {
     @Provides
     @Singleton
-    fun provideUsuarioRepository(db: AppDatabase): UsuarioRepository{
-        return UsuarioRepository(db)
-    }
-
-    @Provides
-    @Singleton
-    fun provideTareaRepository(db: AppDatabase): TareaRepository{
-        return TareaRepository(db)
+    fun provideTareaRepository(
+        db: AppDatabase,
+        etiquetaXTareaRepository: EtiquetaXTareaRepository
+    ): TareaRepository{
+        return TareaRepository(db, etiquetaXTareaRepository)
     }
 
     @Provides
@@ -38,8 +34,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideUsuarioXEtiquetaRepository(db: AppDatabase): EtiquetaXUsuarioRepository{
-        return EtiquetaXUsuarioRepository(db)
+    fun provideEtiquetaXTareaRepository(db: AppDatabase): EtiquetaXTareaRepository{
+        return EtiquetaXTareaRepository(db)
     }
 
 
@@ -50,6 +46,8 @@ class AppModule {
             context,
             AppDatabase::class.java,
             DB_NAME
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }

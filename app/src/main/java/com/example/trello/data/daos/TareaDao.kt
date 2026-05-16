@@ -10,6 +10,7 @@ import androidx.room.Update
 import com.example.trello.data.entities.EtiquetaXTarea
 import com.example.trello.data.entities.Tarea
 import com.example.trello.data.relations.TareaConEtiquetas
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TareaDao {
@@ -17,21 +18,22 @@ interface TareaDao {
     @Transaction
     @Query("""
         SELECT * FROM tareas 
-        WHERE idUsuario = :idUsuario
     """)
-    suspend fun getTareasConEtiquetas(
-        idUsuario: Int
-    ): List<TareaConEtiquetas>
+    suspend fun getTareasConEtiquetas(): List<TareaConEtiquetas>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM tareas 
+    """)
+    fun getTareasConEtiquetasFlow(): Flow<List<TareaConEtiquetas>>
 
     @Transaction
     @Query("""
         SELECT * FROM tareas
-        WHERE idUsuario = :idUsuario
-        AND idTarea = :idTarea
+        WHERE idTarea = :idTarea
         LIMIT 1
     """)
     suspend fun getTareaConEtiquetasPorTarea(
-        idUsuario: Int,
         idTarea: Int
     ): TareaConEtiquetas?
 
@@ -49,11 +51,9 @@ interface TareaDao {
 
     @Query("""
         DELETE FROM tareas
-        WHERE idUsuario = :idUsuario
-        AND idTarea = :idTarea
+        WHERE idTarea = :idTarea
     """)
     suspend fun deleteTareaById(
-        idUsuario: Int,
         idTarea: Int
     ): Int
 
@@ -66,11 +66,9 @@ interface TareaDao {
     @Query("""
         SELECT idEtiqueta 
         FROM etiqueta
-        WHERE idUsuario = :idUsuario
-        AND idEtiqueta IN (:idsEtiquetas)
+        WHERE idEtiqueta IN (:idsEtiquetas)
     """)
-    suspend fun getIdsEtiquetasDelUsuario(
-        idUsuario: Int,
+    suspend fun getIdsEtiquetas(
         idsEtiquetas: List<Int>
     ): List<Int>
 
@@ -78,17 +76,14 @@ interface TareaDao {
         SELECT EXISTS(
             SELECT 1 
             FROM tareas
-            WHERE idUsuario = :idUsuario
-            AND idTarea = :idTarea
+            WHERE idTarea = :idTarea
         )
     """)
-    suspend fun existeTareaDelUsuario(
-        idUsuario: Int,
+    suspend fun existeTarea(
         idTarea: Int
     ): Boolean
 
-    suspend fun validarEtiquetasDelUsuario(
-        idUsuario: Int,
+    suspend fun validarEtiquetas(
         idsEtiquetas: List<Int>
     ) {
         val idsEtiquetasUnicas = idsEtiquetas.distinct()
@@ -97,8 +92,7 @@ interface TareaDao {
             return
         }
 
-        val idsEtiquetasValidas = getIdsEtiquetasDelUsuario(
-            idUsuario = idUsuario,
+        val idsEtiquetasValidas = getIdsEtiquetas(
             idsEtiquetas = idsEtiquetasUnicas
         ).toSet()
 
@@ -108,7 +102,7 @@ interface TareaDao {
 
         if (idsEtiquetasInvalidas.isNotEmpty()) {
             throw IllegalArgumentException(
-                "Las siguientes etiquetas no existen o no pertenecen al usuario: $idsEtiquetasInvalidas"
+                "Las siguientes etiquetas no existen: $idsEtiquetasInvalidas"
             )
         }
     }
@@ -120,8 +114,7 @@ interface TareaDao {
     ): Long {
         val idsEtiquetasUnicas = idsEtiquetas.distinct()
 
-        validarEtiquetasDelUsuario(
-            idUsuario = tarea.idUsuario,
+        validarEtiquetas(
             idsEtiquetas = idsEtiquetasUnicas
         )
 
@@ -144,21 +137,19 @@ interface TareaDao {
         tarea: Tarea,
         idsEtiquetas: List<Int>
     ): Int {
-        val existeTareaDelUsuario = existeTareaDelUsuario(
-            idUsuario = tarea.idUsuario,
+        val existeTarea = existeTarea(
             idTarea = tarea.idTarea
         )
 
-        if (!existeTareaDelUsuario) {
+        if (!existeTarea) {
             throw IllegalArgumentException(
-                "La tarea no existe o no pertenece al usuario."
+                "La tarea no existe."
             )
         }
 
         val idsEtiquetasUnicas = idsEtiquetas.distinct()
 
-        validarEtiquetasDelUsuario(
-            idUsuario = tarea.idUsuario,
+        validarEtiquetas(
             idsEtiquetas = idsEtiquetasUnicas
         )
 
@@ -183,4 +174,73 @@ interface TareaDao {
 
         return filasActualizadas
     }
+
+
+    @Transaction
+    @Query("""
+        SELECT * FROM tareas
+        WHERE (:query IS NULL OR :query = '' OR LOWER(titulo) LIKE '%' || LOWER(:query) || '%')
+        AND (:estado IS NULL OR estado = :estado)
+        AND (:prioridad IS NULL OR prioridad = :prioridad)
+        AND (:etiquetaId IS NULL OR EXISTS (
+            SELECT 1 FROM etiquetaxtarea et
+            WHERE et.idTarea = tareas.idTarea AND et.idEtiqueta = :etiquetaId
+        ))
+        ORDER BY titulo ASC
+    """)
+    fun getTareasFiltradas_PorTitulo(
+        query: String?, estado: String?, prioridad: String?, etiquetaId: Int?
+    ): Flow<List<TareaConEtiquetas>>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM tareas
+        WHERE (:query IS NULL OR :query = '' OR LOWER(titulo) LIKE '%' || LOWER(:query) || '%')
+        AND (:estado IS NULL OR estado = :estado)
+        AND (:prioridad IS NULL OR prioridad = :prioridad)
+        AND (:etiquetaId IS NULL OR EXISTS (
+            SELECT 1 FROM etiquetaxtarea et
+            WHERE et.idTarea = tareas.idTarea AND et.idEtiqueta = :etiquetaId
+        ))
+        ORDER BY CASE prioridad
+            WHEN 'ALTA' THEN 1
+            WHEN 'MEDIA' THEN 2
+            WHEN 'BAJA' THEN 3
+        END ASC
+    """)
+    fun getTareasFiltradas_PorPrioridad(
+        query: String?, estado: String?, prioridad: String?, etiquetaId: Int?
+    ): Flow<List<TareaConEtiquetas>>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM tareas
+        WHERE (:query IS NULL OR :query = '' OR LOWER(titulo) LIKE '%' || LOWER(:query) || '%')
+        AND (:estado IS NULL OR estado = :estado)
+        AND (:prioridad IS NULL OR prioridad = :prioridad)
+        AND (:etiquetaId IS NULL OR EXISTS (
+            SELECT 1 FROM etiquetaxtarea et
+            WHERE et.idTarea = tareas.idTarea AND et.idEtiqueta = :etiquetaId
+        ))
+        ORDER BY fechaCreacion DESC
+    """)
+    fun getTareasFiltradas_PorFechaCreacion(
+        query: String?, estado: String?, prioridad: String?, etiquetaId: Int?
+    ): Flow<List<TareaConEtiquetas>>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM tareas
+        WHERE (:query IS NULL OR :query = '' OR LOWER(titulo) LIKE '%' || LOWER(:query) || '%')
+        AND (:estado IS NULL OR estado = :estado)
+        AND (:prioridad IS NULL OR prioridad = :prioridad)
+        AND (:etiquetaId IS NULL OR EXISTS (
+            SELECT 1 FROM etiquetaxtarea et
+            WHERE et.idTarea = tareas.idTarea AND et.idEtiqueta = :etiquetaId
+        ))
+        ORDER BY (fechaVencimiento IS NULL) ASC, fechaVencimiento ASC
+    """)
+    fun getTareasFiltradas_PorFechaVencimiento(
+        query: String?, estado: String?, prioridad: String?, etiquetaId: Int?
+    ): Flow<List<TareaConEtiquetas>>
 }

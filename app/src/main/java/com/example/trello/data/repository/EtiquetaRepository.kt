@@ -1,27 +1,28 @@
 package com.example.trello.data.repository
 import com.example.trello.data.database.AppDatabase
 import com.example.trello.data.entities.Etiqueta
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class EtiquetaRepository @Inject constructor(
     private val db: AppDatabase
 ){
-    suspend fun getEtiquetasPorUsuario(idUsuario: Int): List<Etiqueta>{
+    suspend fun getEtiquetas(): List<Etiqueta>{
         return try {
             db
                 .etiquetaDao()
-                .getEtiquetas(idUsuario)
+                .getEtiquetas()
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
         }
     }
 
-    suspend fun getEtiquetasPorUsuarioYId(idUsuario: Int, idEtiqueta: Int): Etiqueta?{
+    suspend fun getEtiquetaById(idEtiqueta: Int): Etiqueta?{
         return try{
             db
                 .etiquetaDao()
-                .getEtiquetaById(idEtiqueta = idEtiqueta, idUsuario=idUsuario)
+                .getEtiquetaById(idEtiqueta = idEtiqueta)
         }catch (e: Exception){
             e.printStackTrace()
             null
@@ -61,14 +62,18 @@ class EtiquetaRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteEtiquetaById(idEtiqueta: Int, idUsuario: Int): Int?{
+    suspend fun deleteEtiquetaById(idEtiqueta: Int): Int?{
         return try {
             db
                 .etiquetaDao()
-                .deleteEtiquetaById(idEtiqueta, idUsuario = idUsuario)
+                .deleteEtiquetaById(idEtiqueta)
         } catch (e: Exception){
             e.printStackTrace()
             null
         }
+    }
+
+    fun getEtiquetasFlow(): Flow<List<Etiqueta>> {
+        return db.etiquetaDao().getEtiquetasFlow()
     }
 }

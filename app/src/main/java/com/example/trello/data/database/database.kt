@@ -8,26 +8,22 @@ import androidx.room.TypeConverters
 import com.example.trello.data.daos.EtiquetaDao
 import com.example.trello.data.daos.EtiquetaXTareaDao
 import com.example.trello.data.daos.TareaDao
-import com.example.trello.data.daos.UsuarioDao
 import com.example.trello.data.entities.Etiqueta
 import com.example.trello.data.entities.EtiquetaXTarea
 import com.example.trello.data.entities.Tarea
-import com.example.trello.data.entities.Usuario
 
 @Database(
     entities = [
         Etiqueta::class,
-        Usuario::class,
         Tarea::class,
         EtiquetaXTarea::class
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun etiquetaDao(): EtiquetaDao
-    abstract fun usuarioDao(): UsuarioDao
     abstract fun tareaDao(): TareaDao
     abstract fun etiquetaXTareaDao(): EtiquetaXTareaDao
 
@@ -43,7 +39,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     DB_NAME
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
                 instance

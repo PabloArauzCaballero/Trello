@@ -6,21 +6,25 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.trello.data.entities.Etiqueta
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EtiquetaDao {
     @Query("""
         SELECT * FROM etiqueta 
-        WHERE idUsuario=:idUsuario
         """)
-    suspend fun getEtiquetas(idUsuario: Int): List<Etiqueta>
+    suspend fun getEtiquetas(): List<Etiqueta>
+
+    @Query("""
+        SELECT * FROM etiqueta 
+        """)
+    fun getEtiquetasFlow(): Flow<List<Etiqueta>>
 
     @Query("""
         SELECT * FROM etiqueta
         WHERE idEtiqueta = :idEtiqueta 
-        AND idUsuario = :idUsuario
         """)
-    suspend fun getEtiquetaById(idEtiqueta: Int, idUsuario: Int): Etiqueta?
+    suspend fun getEtiquetaById(idEtiqueta: Int): Etiqueta?
 
     @Insert
     suspend fun insertEtiqueta(etiqueta: Etiqueta): Long
@@ -34,7 +38,6 @@ interface EtiquetaDao {
     @Query("""
         DELETE FROM etiqueta 
         WHERE idEtiqueta = :idEtiqueta
-        AND idUsuario = :idUsuario
         """)
-    suspend fun deleteEtiquetaById(idEtiqueta: Int, idUsuario: Int): Int
+    suspend fun deleteEtiquetaById(idEtiqueta: Int): Int
 }
