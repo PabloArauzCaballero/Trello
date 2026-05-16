@@ -3,7 +3,7 @@ import com.example.trello.data.database.AppDatabase
 import com.example.trello.data.entities.EtiquetaXTarea
 import javax.inject.Inject
 
-class EtiquetaXUsuarioRepository @Inject constructor(
+class EtiquetaXTareaRepository @Inject constructor(
     private val db: AppDatabase
 ) {
     suspend fun asociarEtiquetaATarea(etiquetaXTarea: EtiquetaXTarea): Long?{
@@ -11,17 +11,6 @@ class EtiquetaXUsuarioRepository @Inject constructor(
             db
                 .etiquetaXTareaDao()
                 .asociarEtiquetaATarea(etiquetaXTarea = etiquetaXTarea)
-        }catch (e: Exception){
-            e.printStackTrace()
-            null
-        }
-    }
-
-    suspend fun quitarTodasLasEtiquetasDeTarea(idTarea: Int): Int?{
-        return try {
-            db
-                .etiquetaXTareaDao()
-                .quitarTodasLasEtiquetasDeTarea(idTarea = idTarea)
         }catch (e: Exception){
             e.printStackTrace()
             null
