@@ -17,9 +17,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
@@ -90,8 +93,12 @@ fun EtiquetasScreen(
                 label = { Text(text = "Nueva etiqueta") },
                 modifier = Modifier.fillMaxWidth()
             )
-            TextButton(onClick = viewModel::guardarEtiqueta) {
-                Text(text = "Crear etiqueta")
+            Button(
+                onClick = viewModel::guardarEtiqueta,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+            ) {
+                Text(text = "Crear etiqueta", color = Color.White)
             }
 
             if (state.etiquetas.isEmpty()) {

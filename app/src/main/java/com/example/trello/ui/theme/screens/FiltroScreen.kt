@@ -1,3 +1,4 @@
+
 package com.example.trello.ui.theme.screens
 
 import androidx.activity.ComponentActivity
@@ -13,13 +14,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -144,28 +147,42 @@ fun FiltroScreen(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(text = "Etiqueta", style = MaterialTheme.typography.labelLarge)
                 val etiquetaActual = state.etiquetas.firstOrNull { it.idEtiqueta == state.filterEtiquetaId }
-                TextButton(onClick = { etiquetaExpanded = true }) {
-                    Text(text = etiquetaActual?.nombre ?: "Todas")
-                }
-                DropdownMenu(
+                ExposedDropdownMenuBox(
                     expanded = etiquetaExpanded,
-                    onDismissRequest = { etiquetaExpanded = false }
+                    onExpandedChange = { etiquetaExpanded = it }
                 ) {
-                    DropdownMenuItem(
-                        text = { Text(text = "Todas") },
-                        onClick = {
-                            etiquetaExpanded = false
-                            viewModel.actualizarFiltroEtiqueta(null)
-                        }
+                    OutlinedTextField(
+                        value = etiquetaActual?.nombre ?: "Todas",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(text = "Etiqueta") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = etiquetaExpanded) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                     )
-                    state.etiquetas.forEach { etiqueta ->
+                    ExposedDropdownMenu(
+                        expanded = etiquetaExpanded,
+                        onDismissRequest = { etiquetaExpanded = false }
+                    ) {
                         DropdownMenuItem(
-                            text = { Text(text = etiqueta.nombre) },
+                            text = { Text(text = "Todas") },
                             onClick = {
                                 etiquetaExpanded = false
-                                viewModel.actualizarFiltroEtiqueta(etiqueta.idEtiqueta)
-                            }
+                                viewModel.actualizarFiltroEtiqueta(null)
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                         )
+                        state.etiquetas.forEach { etiqueta ->
+                            DropdownMenuItem(
+                                text = { Text(text = etiqueta.nombre) },
+                                onClick = {
+                                    etiquetaExpanded = false
+                                    viewModel.actualizarFiltroEtiqueta(etiqueta.idEtiqueta)
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                            )
+                        }
                     }
                 }
             }
