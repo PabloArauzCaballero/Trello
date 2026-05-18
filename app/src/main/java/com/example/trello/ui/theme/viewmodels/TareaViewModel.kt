@@ -122,6 +122,13 @@ class TareaViewModel @Inject constructor(
         _uiState.update { it.copy(editorState = null) }
     }
 
+    fun limpiarFechaVencimiento() {
+        _uiState.update { state ->
+            val editor = state.editorState ?: return@update state
+            state.copy(editorState = editor.copy(fechaVencimientoMillis = null))
+        }
+    }
+
     fun actualizarEditor(
         titulo: String? = null,
         descripcion: String? = null,
